@@ -1,0 +1,81 @@
+Sub ticker_volume():
+   For Each ws In Worksheets
+    
+    Dim ticker As String
+    Dim volume As Double
+    volume = 0
+    Dim itstherow As Integer
+    itstherow = 2
+    Dim firstopen As Double
+    firstopen = ws.Cells(2, 3).Value
+    Dim lastclose As Double
+    Dim ychange As Double
+    Dim pchange As Double
+    Dim greatestincreasev As Double
+    Dim greatestincreaset As String
+    Dim greatestdecreasev As Double
+    Dim greatestdecreaset As String
+    Dim greatestvolumet As String
+    Dim greatestvolumev As Double
+    
+    
+    ws.Range("I1").Value = "Ticker"
+    ws.Range("J1").Value = "Yearly Change"
+    ws.Range("K1").Value = "Percent Change"
+    ws.Range("L1").Value = "Total Volume"
+    ws.Range("P1").Value = "Ticker"
+    ws.Range("Q1").Value = "Value"
+    ws.Range("O2").Value = "Greatest % Increase"
+    ws.Range("O3").Value = "Greatest % Decrease"
+    ws.Range("O4").Value = "Greatest Total Volume"
+    
+    
+    For i = 2 To 753001
+        If ws.Cells(i + 1, 1) <> ws.Cells(i, 1) Then
+            ticker = ws.Cells(i, 1).Value
+            volume = volume + ws.Cells(i, 7).Value
+            lastclose = ws.Cells(i, 6).Value
+            ychange = lastclose - firstopen
+            pchange = ychange / firstopen
+            ws.Range("I" & itstherow).Value = ticker
+            ws.Range("L" & itstherow).Value = volume
+            ws.Range("J" & itstherow).Value = ychange
+                If ychange >= 0 Then
+                    ws.Range("J" & itstherow).Interior.ColorIndex = 4
+                    Else
+                    ws.Range("J" & itstherow).Interior.ColorIndex = 3
+                End If
+            ws.Range("K" & itstherow).Value = pchange
+            ws.Range("K" & itstherow).NumberFormat = "0.00%"
+            If pchange > greatestincreasev Then
+                greatestincreasev = pchange
+                greatestincreaset = ticker
+                ElseIf pchange < greatestdecreasev Then
+                greatestdecreasev = pchange
+                greatestdecreaset = ticker
+             End If
+             If volume > greatestvolumev Then
+                greatestvolumev = volume
+                greatestvolumet = ticker
+              End If
+            itstherow = itstherow + 1
+            volume = 0
+            firstopen = ws.Cells(i + 1, 3).Value
+        Else
+            volume = volume + ws.Cells(i, 7).Value
+        End If
+    Next i
+    ws.Range("P2").Value = greatestincreaset
+    ws.Range("Q2").Value = greatestincreasev
+    ws.Range("Q2").NumberFormat = "0.00%"
+    ws.Range("P3").Value = greatestdecreaset
+    ws.Range("Q3").Value = greatestdecreasev
+    ws.Range("q3").NumberFormat = "0.00%"
+    ws.Range("P4").Value = greatestvolumet
+    ws.Range("Q4").Value = greatestvolumev
+    greatestdecreasev = 0
+    greatestincreasev = 0
+    greatestvolumev = 0
+    
+    Next ws
+End Sub
